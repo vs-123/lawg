@@ -21,7 +21,6 @@
 
 use std::fs;
 
-use chrono;
 use chrono::Local;
 use chrono::Utc;
 
@@ -45,14 +44,14 @@ impl Logger {
     pub fn new(logger_name: String, file_log: Option<String>, use_utc: bool) -> Self {
         if let Some(file) = file_log.clone() {
             let file_log_content = fs::read_to_string(file.clone())
-                .expect(&format!("Could not read log file `{}`", file.clone()));
+                .unwrap_or_else(|_| panic!("Could not read log file `{}`", file));
 
             fs::write(file.clone(), file_log_content)
-                .expect(&format!("Could not create log file `{}`", file))
+                .unwrap_or_else(|_| panic!("Could not create log file `{}`", file));
         }
 
         Logger {
-            logger_name: logger_name,
+            logger_name,
             file_log,
             use_utc,
         }
@@ -94,7 +93,7 @@ impl Logger {
     pub fn log_to_file<T: std::fmt::Display>(&self, msg: T) {
         if let Some(file_log) = &self.file_log {
             let file_log_content = fs::read_to_string(file_log.clone())
-                .expect(&format!("Could not read log file `{}`", file_log.clone()));
+                .unwrap_or_else(|_| panic!("Could not read log file `{}`", file_log.clone()));
 
             fs::write(
                 &file_log.clone(),
@@ -111,11 +110,10 @@ impl Logger {
                             }
                         },
                         msg
-                    )
-                    .clone())
+                    ))
                     .as_bytes(),
             )
-            .expect(&format!("Could not create log file `{}`", file_log.clone()));
+            .unwrap_or_else(|_| panic!("Could not create log file `{}`", file_log.clone()));
         } else {
             panic!("Log file not provided.");
         }
@@ -130,8 +128,8 @@ impl Logger {
     /// my_logger.log_and_log_to_file("This log will appear on the console and also be written to the file"); // My Logger - ["yyyy-mm-dd hh:mm:ss UTC"]: This log will appear on the console and also be written to the file
     /// ```
     pub fn log_and_log_to_file(&self, msg: String) {
-        log(msg.clone());
-        log_to_file(msg);
+        self.log(msg.clone());
+        self.log_to_file(msg);
     }
 
     /// Logs an error to the console.
@@ -170,7 +168,7 @@ impl Logger {
     pub fn error_to_file<T: std::fmt::Display>(&self, msg: T) {
         if let Some(file_log) = &self.file_log {
             let file_log_content = fs::read_to_string(file_log.clone())
-                .expect(&format!("Could not read log file `{}`", file_log.clone()));
+                .unwrap_or_else(|_| panic!("Could not read log file `{}`", file_log.clone()));
 
             fs::write(
                 &file_log.clone(),
@@ -187,11 +185,10 @@ impl Logger {
                             }
                         },
                         msg
-                    )
-                    .clone())
+                    ))
                     .as_bytes(),
             )
-            .expect(&format!("Could not create log file `{}`", file_log.clone()));
+            .unwrap_or_else(|_| panic!("Could not create log file `{}`", file_log.clone()));
         } else {
             panic!("Log file not provided.");
         }
@@ -206,8 +203,8 @@ impl Logger {
     /// my_logger.error_to_file("Something went wrong! Try again later");
     /// ```
     pub fn error_and_error_to_file(&self, msg: String) {
-        error(msg.clone());
-        error_to_file(msg);
+        self.error(msg.clone());
+        self.error_to_file(msg);
     }
 
     /// Logs an error to the console and stops the program.
@@ -234,7 +231,7 @@ impl Logger {
     pub fn error_and_stop_to_file<T: std::fmt::Display>(&self, msg: T) {
         if let Some(file_log) = &self.file_log {
             let file_log_content = fs::read_to_string(file_log.clone())
-                .expect(&format!("Could not read log file `{}`", file_log.clone()));
+                .unwrap_or_else(|_| panic!("Could not read log file `{}`", file_log.clone()));
 
             fs::write(
                 &file_log.clone(),
@@ -251,11 +248,10 @@ impl Logger {
                             }
                         },
                         msg
-                    )
-                    .clone())
+                    ))
                     .as_bytes(),
             )
-            .expect(&format!("Could not create log file `{}`", file_log.clone()));
+            .unwrap_or_else(|_| panic!("Could not create log file `{}`", file_log.clone()));
 
             std::process::exit(1);
         } else {
