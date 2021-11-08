@@ -11,7 +11,7 @@
 //!
 //!     let mut x = 1 + 1;
 //!
-//!     if x != 2 {
+//!     if x == 2 {
 //!         logger.log_and_log_to_file(String::from("It is two")); // My Logger - ["yyyy-mm-dd hh:mm:ss UTC"]: It is two
 //!     } else {
 //!         logger.error_and_stop("1 + 1 is not two"); // ERROR: My Logger - ["yyyy-mm-dd hh:mm:ss UTC"]: 1 + 1 is not two
