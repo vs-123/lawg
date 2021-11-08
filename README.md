@@ -8,7 +8,7 @@ lawg is a Rust library designed to log and create log files with ease.
 use lawg::Logger;
 
 fn main() {
-    let logger = Logger::new("String::from(General Logger"), Some(String::from("../logs/general/logs.txt")), true);
+    let logger = Logger::new(String::from("General Logger"), Some(String::from("../logs/general/logs.txt")), true);
 
     logger.log("Started"); // My Logger - ["yyyy-mm-dd hh:mm:ss UTC"]: Started
     logger.log_to_file("Started again");

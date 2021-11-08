@@ -2,15 +2,15 @@
 //! # Example
 //! ```rust
 //! use lawg::Logger;
-//! 
+//!
 //! fn main() {
-//!     let logger = Logger::new("String::from(General Logger"), Some(String::from("../logs/general/logs.txt")), true);
-//! 
+//!     let logger = Logger::new(String::from("General Logger"), Some(String::from("../logs/general/logs.txt")), true);
+//!
 //!     logger.log("Started"); // My Logger - ["yyyy-mm-dd hh:mm:ss UTC"]: Started
 //!     logger.log_to_file("Started again");
-//!     
+//!
 //!     let mut x = 1 + 1;
-//! 
+//!
 //!     if x != 2 {
 //!         logger.log_and_log_to_file(String::from("It is two")); // My Logger - ["yyyy-mm-dd hh:mm:ss UTC"]: It is two
 //!     } else {
@@ -34,6 +34,8 @@ pub struct Logger {
 
 impl Logger {
     /// Creates a new `Logger` struct.
+    /// If `file_log` is provided, it will check if the file exists.
+    /// If it does, it will do a read and write test on it, otherwise it will create a new file `file_log`.
     /// # Example
     /// ```rust
     /// use lawg::Logger;
@@ -43,10 +45,14 @@ impl Logger {
     /// ```
     pub fn new(logger_name: String, file_log: Option<String>, use_utc: bool) -> Self {
         if let Some(file) = file_log.clone() {
-            let file_log_content = fs::read_to_string(file.clone())
-                .unwrap_or_else(|_| panic!("Could not read log file `{}`", file));
+            let mut file_log_content = String::new();
 
-            fs::write(file.clone(), file_log_content)
+            if std::path::Path::new(&file.clone()).exists() {
+                file_log_content = fs::read_to_string(file.clone())
+                .unwrap_or_else(|_| panic!("Could not read log file `{}`", file));
+            }
+
+            fs::write(file.clone(), file_log_content.as_bytes())
                 .unwrap_or_else(|_| panic!("Could not create log file `{}`", file));
         }
 
